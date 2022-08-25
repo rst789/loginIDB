@@ -1,0 +1,81 @@
+html {
+    height: 100%;
+}
+
+h1 {
+    opacity: 1;
+    text-align: center;
+}
+
+h2 {
+    font-size: 180%;
+    display: grid;
+    text-align: center;
+    opacity: 0;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    background-color: #ffffff;
+}
+
+#login-error-msg-holder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+}
+
+#login-error-msg {
+    width: 23%;
+    text-align: center;
+    margin: 0;
+    padding: 5px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #8a0000;
+    border: 1px solid #8a0000;
+    background-color: #e58f8f;
+    opacity: 0;
+}
+
+#register-msg-holder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+}
+
+#register-msg {
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    color: #000000;
+    background-color: #ffffff;
+    opacity: 0;
+}
+
+login-form-field {
+    border: none;
+    border-bottom: 1px solid #3a3a3a;
+    margin-bottom: 10px;
+    border-radius: 3px;
+    outline: none;
+    padding: 0 0 5px 5px;
+}
+
+#login-form {
+    opacity: 1;
+}
+
+#register-form {
+    opacity: 0;
+}
