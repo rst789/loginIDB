@@ -10,19 +10,14 @@
 <main id="main-holder">
     <h1 id="login-header">Login</h1>
 
-    <div id="login-error-msg-holder">
-        <p id="login-error-msg">Invalid username <span id="error-msg-second-line">and/or password</span></p>
-    </div>
-
     <form id="login-form">
         <label for="username-field"></label><input type="text" name="username" id="username-field" class="login-form-field" placeholder="Username" autocomplete="off">
         <label for="password-field"></label><input type="password" name="password" id="password-field" class="login-form-field" placeholder="Password" autocomplete="off">
         <input type="submit" value="Login" id="login-form-submit">
     </form>
 
-    <input type="submit" value="TEST" id="submit-btn">
-
-    <button id="myBTN">TRY IT</button>
+<!--    <input type="submit" value="TEST" id="submit-btn">-->
+<!--    <button id="myBTN">TRY IT</button>-->
 
     <p id="demo"></p>
 
@@ -33,19 +28,12 @@
     const usernameForm = document.getElementById("username-field");
     const passwordForm = document.getElementById("password-field");
 
-    const submitButton = document.getElementById("submit-btn");
-
-    document.getElementById("myBTN").addEventListener("click", displayDate);
-
-    function displayDate() {
-        document.getElementById("demo").innerHTML = usernameForm.value;
-    }
-
-    submitButton.addEventListener("click", (e) => {
-        e.preventDefault();
-        alert("WORKING?");
-        location.reload();
-    });
+    // const submitButton = document.getElementById("submit-btn");
+    // submitButton.addEventListener("click", (e) => {
+    //     e.preventDefault();
+    //     alert("WORKING?");
+    //     location.reload();
+    // });
 
     const btnCreateDB = document.getElementById("DBBtn");
     btnCreateDB.addEventListener("click", createDBFR);
@@ -57,76 +45,49 @@
         // alert("DB CREATED SUCCESSFULLY");
         let db;
         const dbName = "user";
-        const request = indexedDB.open(dbName, 4);
+        const request = indexedDB.open(dbName, 1);
 
         request.onupgradeneeded = (event) => {
-            alert("upgrade");
+            // alert("Upgrade");
+
+            alert("Successfully loaded DB in onupgradeneeded");
+
             const db = event.target.result;
-
-            const objectStore = db.createObjectStore("customers", { keyPath: "username" });
-
-            objectStore.createIndex("username", "username", { unique: true });
-
-            // Create an index to search customers by email. We want to ensure that
-            // no two customers have the same email, so use a unique index.
-            // objectStore.createIndex("username", "username", { unique: true });
-
-            objectStore.transaction.oncomplete = (event) => {
-                alert("transaction");
-                // Store values in the newly created objectStore.
-                const customerObjectStore = db.transaction("customers", "readwrite").objectStore("customers");
-                const customerData = [
-                    { username: "user1", password: "pwd1" },
-                    { username: "user2", password: "pwd2" }
-                ];
-                customerData.forEach((customer) => {
-                    customerObjectStore.add(customer);
-                });
-                // console.log(customerData);
-
-                const tx = db.transaction("customers", "readwrite");
-                const store = tx.objectStore("customers", {keyPath: "username"});
-                const index = store.index("username");
-
-                const request2 = index.get("user3");
-                request2.onsuccess = function (){
-                    const matching = request2.result;
-                    if (matching !== undefined) {
-                        console.log(matching.username, matching.password);
-                    } else {
-                        console.log("Not found");
-                    }
-                }
-
-                const request3 = index.get(usernameForm.value);
-                const request4 = index.get(passwordForm.value);
-                request3.onsuccess = function (){
-                    const matching2 = request3.result;
-                    if (matching2 !== undefined) {
-                        alert("You have successfully logged in");
-                    } else {
-                        alert("Invalid username or password");
-                    }
-                }
-            };
 
             db.onerror = (event) => {
                 // Generic error handler for all errors targeted at this database's requests!
                 console.error(`Database error: ${event.target.errorCode}`);
             };
 
+            const objectStore = db.createObjectStore("customers", {keyPath: "username"});
+
+            objectStore.createIndex("username", "username", {unique: true});
+            objectStore.createIndex("password", "password", {unique: false});
+        };
+
+        request.onsuccess = (event) => {
+            alert("Successfully loaded DB in onsuccess");
+            const db = request.result;
+
+            const transaction0 = db.transaction(["customers"], "readwrite");
+
+            transaction0.oncomplete = (event) => {
+                alert("Transaction completed");
+            }
+
+            const objectStore = transaction0.objectStore("customers");
+            const newItem = {
+                username: "user1", password: "pwd1",
+            };
+            const objectStoreRequest = objectStore.add(newItem);
         };
 
         request.onerror = (event) => {
             // Handle errors.
             alert("Error");
         };
-
-        request.onsuccess = (event) => {
-            alert("Successfully loaded DB");
-            db = event.target.result;
-        };
     }
+
 </script>
 
 </body>
