@@ -39,57 +39,112 @@
     btnCreateDB.addEventListener("click", createDBFR);
 
     const loginBtn = document.getElementById("login-form-submit");
-    loginBtn.addEventListener("click", createDBFR);
+    loginBtn.addEventListener("click", loginDB);
 
     function createDBFR() {
-        // alert("DB CREATED SUCCESSFULLY");
-        let db;
         const dbName = "user";
         const request = indexedDB.open(dbName, 1);
 
         request.onupgradeneeded = (event) => {
-            // alert("Upgrade");
-
-            alert("Successfully loaded DB in onupgradeneeded");
-
+            alert("DB CREATED SUCCESSFULLY");
             const db = event.target.result;
 
             db.onerror = (event) => {
-                // Generic error handler for all errors targeted at this database's requests!
                 console.error(`Database error: ${event.target.errorCode}`);
             };
 
             const objectStore = db.createObjectStore("customers", {keyPath: "username"});
 
-            objectStore.createIndex("username", "username", {unique: true});
-            objectStore.createIndex("password", "password", {unique: false});
+            objectStore.createIndex("username_index", "username", {unique: true});
+            objectStore.createIndex("password_index", "password", {unique: false});
+
+            let requestIdx = objectStore.index("username_index");
+
+            // let request15 = requestIdx.getAll();
+            //
+            // request15.onsuccess = function () {
+            //     if(request15.result !== undefined) {
+            //         alert(request15);
+            //     } else {
+            //         alert("No");
+            //     }
+            // }
+
+            const myIndex = objectStore.index("username_index");
+            let request2 = myIndex.getAll(usernameForm.value);
+
+            request2.onsuccess = function() {
+                if(request2.result !== undefined){
+                    alert("You have successfully logged in!");
+                    window.location.href = "quizDB.html";
+                } else {
+                    alert("No results found");
+                }
+            }
         };
 
         request.onsuccess = (event) => {
-            alert("Successfully loaded DB in onsuccess");
+            alert("Successfully loaded DB");
             const db = request.result;
 
             const transaction0 = db.transaction(["customers"], "readwrite");
 
             transaction0.oncomplete = (event) => {
-                alert("Transaction completed");
+                alert("Transaction complete");
             }
 
             const objectStore = transaction0.objectStore("customers");
             const newItem = {
                 username: "user1", password: "pwd1",
             };
+
             const objectStoreRequest = objectStore.add(newItem);
+
+            objectStoreRequest.onsuccess = (event) =>{
+                alert("Users added to the database successfully");
+            }
         };
 
         request.onerror = (event) => {
-            // Handle errors.
             alert("Error");
         };
     }
 
-</script>
+    function loginDB() {
+        const dbName = "user";
+        const request = indexedDB.open(dbName, 1);
 
+        request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            db.onerror = (event) => {
+                console.error(`Database error: ${event.target.errorCode}`);
+            };
+            const objectStore = db.createObjectStore("customers", {keyPath: "username"});
+        }
+
+        request.onsuccess = (event) => {
+            alert("loginDB Success");
+            const db = request.result;
+            // const objectStore = db.createObjectStore("customers", {keyPath: "username"});
+            // const myIndex = objectStore.index("username");
+            // let request2 = myIndex.getAll(usernameForm.value);
+            //
+            // request2.onsuccess = function() {
+            //     if(request2.result !== undefined){
+            //         alert("You have successfully logged in!");
+            //         alert(request2);
+            //     } else {
+            //         alert("No results found");
+            //     }
+            // }
+        }
+
+        request.onerror = (event) => {
+            alert("loginDB Error");
+        };
+    }
+
+</script>
 </body>
 
 </html>
